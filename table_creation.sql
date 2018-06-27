@@ -2,7 +2,7 @@ drop database robobase;
 create database robobase;
 use robobase;
 
-create table user (
+create table users (
 	userID int not null auto_increment primary key,
 	userName varchar(20) not null unique
 ) auto_increment=10000 engine=INNODB;
@@ -15,7 +15,7 @@ create table team (
 create table teamUserAssignment(
 	teamUserAssignmentID int not null auto_increment primary key,
 	userID int not null,
-	constraint foreign key (userID) references user(userID),
+	constraint foreign key (userID) references users(userID),
 	teamID int not null,
 	constraint foreign key (teamID) references team(teamID)
 ) auto_increment=10000 engine=INNODB;
@@ -29,7 +29,7 @@ create table role (
 create table userRoleAssignment (
 	userRoleAssignmentID int not null auto_increment primary key,
 	userID int not null,
-	constraint foreign key (userID) references user(userID),
+	constraint foreign key (userID) references users(userID),
 	roleID int not null,
 	constraint foreign key (roleID) references role(roleID)
 ) auto_increment=10000 engine=INNODB;
@@ -59,21 +59,22 @@ create table event (
 create table eventAvailability (
 	eventAvailabilityID int not null auto_increment primary key,
 	userID int not null,
-	constraint foreign key (userID) references user(userID),
+	constraint foreign key (userID) references users(userID),
 	eventID int not null,
 	constraint foreign key (eventID) references event(eventID),
 	availability bool
 ) auto_increment=10000 engine=INNODB;
 
 create table attendanceCode (
-	attendanceCode varchar(5) not null primary key,
+	attendanceCodeID int not null auto_increment primary key,
+	attendanceCode varchar(5) not null unique,
 	description varchar(50)
-) engine=INNODB;
+) auto_increment=10000 engine=INNODB;
 
 create table attendanceRecord (
 	attendanceRecordID int not null auto_increment primary key,
 	userID int not null,
-	constraint foreign key (userID) references user(userID),
+	constraint foreign key (userID) references users(userID),
 	eventID int not null,
 	constraint foreign key (eventID) references event(eventID),
 	attendanceCode varchar(5),
@@ -81,7 +82,7 @@ create table attendanceRecord (
 ) auto_increment=10000 engine=INNODB;
 
 create table permissionForm (
-	permissionFormID int not null primary key,
+	permissionFormID int not null auto_increment primary key,
 	name varchar(20) not null,
 	description varchar(200) not null
 ) auto_increment=10000 engine=INNODB;
@@ -89,7 +90,7 @@ create table permissionForm (
 create table userPermissionForm(
 	userPermissionFormID int not null auto_increment primary key,
 	userID int not null,
-	constraint foreign key (userID) references user(userID),
+	constraint foreign key (userID) references users(userID),
 	permissionFormID int not null,
 	constraint foreign key (permissionFormID) references permissionForm(permissionFormID)
 ) auto_increment=10000 engine=INNODB;
@@ -147,7 +148,7 @@ create table teamRequest(
 	itemID int not null,
 	constraint foreign key (itemID) references inventoryItem(itemID),
 	userID int not null,
-	constraint foreign key (userID) references user(userID),
+	constraint foreign key (userID) references users(userID),
 	teamID int not null,
 	constraint foreign key (teamID) references team(teamID),
 	requestTypeID int not null,
