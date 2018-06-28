@@ -23,8 +23,11 @@ function randDate{
 	[datetime]$min = "1/1/2018"
 	[datetime]$max = "12/31/2018"
 	
-	[datetime]($min.ticks + (get-random -max ($max.Ticks - $min.Ticks)))
+	$d = Get-Date ($min.ticks + (get-random -max ($max.Ticks - $min.Ticks))) -format "yyyy-MM-dd HH:mm:ss"
+	
+	"`"$d`""
 }
+#`"
 
 $zero = $function:zeroID
 $rand = $function:randString
