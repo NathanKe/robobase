@@ -3,6 +3,7 @@ var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
+var jwtSecret = 'Shhhhhhhhhh';
 var crypto = require('crypto');
 
 
@@ -41,7 +42,25 @@ app.get('/',(req,res)=>{
 	res.render('index');
 });
 
-app.get('/users',(req,res)=>{
+//https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens#route-middleware-to-protect-api-routes
+//https://scotch.io/tutorials/route-middleware-to-check-if-a-user-is-authenticated-in-node-js
+function isAuthenticated(req,res,next){
+	var token = req.body.token || req.query.token;
+	console.log(token);
+	if(token){
+		jwt.verify(token,jwtSecret,(err,decoded)=>{
+			if(err){
+				res.status(403).send({err:'validation fail'});
+			}else{
+				next();
+			}
+		});
+	}else{
+		res.status(403).send({err:'no token'});
+	}
+}
+
+app.get('/users',isAuthenticated,(req,res)=>{
 	connection.query("select userName from users",(err,data)=>{
 		if(err)throw err;
 		res.send(JSON.stringify(data));
@@ -69,9 +88,11 @@ app.post('/login',(req,response)=>{
 			var pswdHash = crypto.createHash('sha512').update(salt+req.body.password).digest('hex');
 			
 			if(pswdHash == result[0].pswd){
-				response.send(JSON.stringify(result[0]));
+				var token = jwt.sign({data:username},jwtSecret,{expiresIn:'15m'});
+				console.log(token);
+				response.send({token:token});
 			}else{
-				response.send("FAIL!");
+				response.send({err:"AuthFail"});
 			}
 		}
 	});

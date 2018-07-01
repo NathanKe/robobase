@@ -11,7 +11,6 @@ function loginClick(){
 		contentType:"application/json; charset=utf-8",
 		dataType:"json",
 		complete: function(data){
-			console.log(data);
 			console.log(data.responseJSON);
 		}
 	});
