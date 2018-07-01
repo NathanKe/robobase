@@ -2,6 +2,8 @@ var mysql = require('mysql');
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
+var jwt = require('jsonwebtoken');
+var crypto = require('crypto');
 
 
 var connection = mysql.createConnection({
@@ -54,7 +56,6 @@ app.get('/test',(req,res)=>{
 app.post('/login',(req,response)=>{
 	console.log("login hit");
 
-	
 	var username = req.body.username;
 	
 	var queryString = "select * from users where username = '"+username+"'";
@@ -64,7 +65,14 @@ app.post('/login',(req,response)=>{
 			console.log("multiple found?");
 		}else{
 			console.log("one found");
-			response.send(JSON.stringify(result[0]));
+			var salt = result[0].salt;
+			var pswdHash = crypto.createHash('sha512').update(salt+req.body.password).digest('hex');
+			
+			if(pswdHash == result[0].pswd){
+				response.send(JSON.stringify(result[0]));
+			}else{
+				response.send("FAIL!");
+			}
 		}
 	});
 });
