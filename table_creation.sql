@@ -4,7 +4,8 @@ use robobase;
 
 create table users (
 	userID int not null auto_increment primary key,
-	userName varchar(20) not null unique
+	userName varchar(20) not null unique,
+	SISID varchar(7) not null unique
 ) auto_increment=10000 engine=INNODB;
 
 create table team (
