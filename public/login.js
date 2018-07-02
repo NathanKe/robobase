@@ -12,6 +12,7 @@ function loginClick(){
 		dataType:"json",
 		complete: function(data){
 			console.log(data.responseJSON);
+			window.sessionStorage.accessToken = data.responseJSON.token;
 		}
 	});
 }

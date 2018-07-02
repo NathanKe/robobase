@@ -6,7 +6,7 @@ create table users (
 	userID int not null auto_increment primary key,
 	userName varchar(20) not null unique,
 	SISID varchar(7) not null unique,
-	salt varchar(5) not null,
+	salt varchar(32) not null,
 	pswd varchar(255) not null
 ) auto_increment=10000 engine=INNODB;
 
@@ -17,10 +17,10 @@ create table team (
 
 create table teamUserAssignment(
 	teamUserAssignmentID int not null auto_increment primary key,
+    teamID int not null,
+	constraint foreign key (teamID) references team(teamID),
 	userID int not null,
-	constraint foreign key (userID) references users(userID),
-	teamID int not null,
-	constraint foreign key (teamID) references team(teamID)
+	constraint foreign key (userID) references users(userID)
 ) auto_increment=10000 engine=INNODB;
 
 create table role (
