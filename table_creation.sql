@@ -56,7 +56,8 @@ create table event (
 	eventName varchar(50) not null,
 	keyEvent bool not null,
 	startTime datetime not null,
-	endTime datetime not null
+	endTime datetime not null,
+    notes varchar(200)
 ) auto_increment=10000 engine=INNODB;
 
 create table eventAvailability (
@@ -69,10 +70,9 @@ create table eventAvailability (
 ) auto_increment=10000 engine=INNODB;
 
 create table attendanceCode (
-	attendanceCodeID int not null auto_increment primary key,
-	attendanceCode varchar(5) not null unique,
+	attendanceCode varchar(5) not null unique primary key,
 	description varchar(50)
-) auto_increment=10000 engine=INNODB;
+) engine=INNODB;
 
 create table attendanceRecord (
 	attendanceRecordID int not null auto_increment primary key,
@@ -87,7 +87,8 @@ create table attendanceRecord (
 create table permissionForm (
 	permissionFormID int not null auto_increment primary key,
 	name varchar(20) not null,
-	description varchar(200) not null
+	description varchar(200) not null,
+    formlink varchar(200)
 ) auto_increment=10000 engine=INNODB;
 
 create table userPermissionForm(
@@ -95,13 +96,14 @@ create table userPermissionForm(
 	userID int not null,
 	constraint foreign key (userID) references users(userID),
 	permissionFormID int not null,
-	constraint foreign key (permissionFormID) references permissionForm(permissionFormID)
+	constraint foreign key (permissionFormID) references permissionForm(permissionFormID),
+    status enum('Incomplete','Complete','Waived')
 ) auto_increment=10000 engine=INNODB;
 
 create table account(
 	accountID int not null auto_increment primary key,
 	accountName varchar(30) not null,
-	currentBalance decimal(4,2) not null default 0
+	currentBalance decimal(6,2) not null default 0
 ) auto_increment=10000 engine=INNODB;
 
 create table ledgerTransaction(
@@ -109,7 +111,7 @@ create table ledgerTransaction(
 	accountID int not null,
 	constraint foreign key (accountID) references account(accountID),
 	transactionDate datetime not null,
-	transactionValue decimal(4,2) not null,
+	transactionValue decimal(6,2) not null,
 	description varchar(100) not null
 ) auto_increment=10000 engine=INNODB;
 

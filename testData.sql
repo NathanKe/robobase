@@ -108,12 +108,99 @@ set @uid = (select userid from users where username = 'caroline');
 set @rid = (select roleid from role where rolename = 'Student');
 insert into userRoleAssignment values (0,@uid,@rid);
 
+#Task Table
+#admin
+insert into task values (0,'hierarchy','Manage item hierarchy');
+insert into task values (0,'taskMgmt','Manage role/task assignment');
+insert into task values (0,'user-coach','Manage coach users');
+#coach
+insert into task values (0,'roster','Manage team roster');
+insert into task values (0,'user-student','Manage student users');
+insert into task values (0,'attendance','Record and view attendance');
+insert into task values (0,'inventory','Manage inventory');
+#student
+insert into task values (0,'eventAvail','Update event availability');
+insert into task values (0,'partCheckout','Check-out parts');
 
+#RoleTaskAssignment Table
+#admin
+set @rid = (select roleid from role where rolename = 'Admin');
+set @tid = (select taskid from task where taskname = 'hierarchy');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @tid = (select taskid from task where taskname = 'taskMgmt');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @tid = (select taskid from task where taskname = 'user-coach');
+insert into roleTaskAssignment values (0,@rid,@tid);
+#coach
+set @rid = (select roleid from role where rolename = 'Coach');
+set @tid = (select taskid from task where taskname = 'roster');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @tid = (select taskid from task where taskname = 'user-student');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @tid = (select taskid from task where taskname = 'attendance');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @tid = (select taskid from task where taskname = 'inventory');
+insert into roleTaskAssignment values (0,@rid,@tid);
+#student
+set @rid = (select roleid from role where rolename = 'Student');
+set @tid = (select taskid from task where taskname = 'eventAvail');
+insert into roleTaskAssignment values (0,@rid,@tid);
+#captain
+set @rid = (select roleid from role where rolename = 'Captain');
+set @tid = (select taskid from task where taskname = 'partCheckout');
+insert into roleTaskAssignment values (0,@rid,@tid);
 
-#insert into task values (0,"waister","lumbagos spavin girasols rosebays valeted inkiest corncake warked redbaits caddie");
-#insert into event values (0,"rarebits comaking",1,"2018-01-10 14:18:24","2018-12-23 05:56:44");
-#insert into attendanceCode values (0,"PING","camel milepost purport");
-#insert into permissionForm values (0,"coseys","paragons prepuce hanking savins alkyne divert samosas aurei horrid parked");
-#insert into account values (0,"passed",0);
-#insert into requestType values (0,"birlings");
-#insert into itemRestriction values (0,"deposits");
+#Event Table
+insert into event values (0,'Practice Sep 1',0,'2018-09-01 15:30','2018-09-01 17:30','First practice of the year');
+insert into event values (0,'Practice Sep 2',0,'2018-09-02 15:30','2018-09-02 17:30','');
+insert into event values (0,'Practice Sep 3',0,'2018-09-03 15:30','2018-09-03 17:30','');
+insert into event values (0,'Practice Sep 4',0,'2018-09-04 15:30','2018-09-04 17:30','');
+insert into event values (0,'Competition Option 1',1,'2018-09-05 08:30','2018-09-04 17:30','Annapolis');
+insert into event values (0,'Competition Option 2',1,'2018-09-05 08:30','2018-09-04 17:30','Bethesda');
+insert into event values (0,'Competition Option 3',1,'2018-09-05 08:30','2018-09-04 17:30','Columbia');
+
+#Event Availability Table
+# note - only interesting for key events - only students answer - default unavilable
+insert into eventAvailability (eventAvailabilityID,userID,eventID,availability)
+select 0,users.userID,eventID,0
+from event 
+	join users 
+    join userRoleAssignment on users.userID = userRoleAssignment.userID
+    join role on userRoleAssignment.roleID = role.roleID
+where keyEvent=1 and roleClass = 'Student';
+
+#Attendance Code Table
+insert into AttendanceCode values ('PRS','present');
+insert into AttendanceCode values ('ABS','absent');
+insert into AttendanceCode values ('OTH','other');
+
+#Attendance Record Table
+# marking all students present for first practice
+insert into attendanceRecord (attendanceRecordID,userID,eventID,attendanceCode)
+select 0,users.userid,eventid,'PRS'
+from event
+	join users
+    join userRoleAssignment on users.userID = userRoleAssignment.userID
+    join role on userRoleAssignment.roleID = role.roleID
+where eventName = 'Practice Sep 1' and roleClass = 'Student';
+
+#PermissionForm table
+insert into permissionForm values (0,'School','BMS required form','link');
+insert into permissionForm values (0,'FIRST','FIRST required form','link');
+
+#UserPermissionForm table
+# mark all students as both forms incomplete
+insert into userPermissionForm (userPermissionFormID,userID,permissionFormID,status)
+select 0,users.userid,permissionformid,'Incomplete'
+from permissionform
+	join users
+    join userRoleAssignment on users.userID = userRoleAssignment.userID
+    join role on userRoleAssignment.roleID = role.roleID
+where roleClass = 'Student';
+
+#account table
+insert into account values (0,'operations',999.99);
+insert into account values (0,'student earnings',0);
+
+#ledgerTransaction table
+insert into ledgerTransaction values (0,10000,'2018-09-01 08:00',999.99,'opening yearly balance');
