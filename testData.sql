@@ -204,3 +204,65 @@ insert into account values (0,'student earnings',0);
 
 #ledgerTransaction table
 insert into ledgerTransaction values (0,10000,'2018-09-01 08:00',999.99,'opening yearly balance');
+
+#RequestType Table
+insert into requestType values (0,'purchase');
+insert into requestType values (0,'modification');
+
+#RequestStatus Table
+insert into requestStatus values (0,'pending');
+insert into requestStatus values (0,'approved');
+insert into requestStatus values (0,'denied');
+insert into requestStatus values (0,'ordered');
+
+#ItemRestriction Table
+insert into itemRestriction values (0,'unrestricted');
+insert into itemRestriction values (0,'limitedquantity');
+insert into itemRestriction values (0,'specialusage');
+
+#ItemHierarchy Table
+#special root element
+insert into itemHierarchy values (0,10000,'root');
+#level one nodes
+insert into itemHierarchy values (0,10000,'servos');
+insert into itemHierarchy values (0,10000,'wheels');
+insert into itemHierarchy values (0,10000,'plates');
+#level two nodes
+insert into itemhierarchy (itemhierarchyid,parentid,description)
+select 0,itemHierarchyID,'continuous' from itemHierarchy where description = 'servos';
+insert into itemhierarchy (itemhierarchyid,parentid,description)
+select 0,itemHierarchyID,'180-degree' from itemHierarchy where description = 'servos';
+insert into itemhierarchy (itemhierarchyid,parentid,description)
+select 0,itemHierarchyID,'omni' from itemHierarchy where description = 'wheels';
+insert into itemhierarchy (itemhierarchyid,parentid,description)
+select 0,itemHierarchyID,'standard' from itemHierarchy where description = 'wheels';
+insert into itemhierarchy (itemhierarchyid,parentid,description)
+select 0,itemHierarchyID,'tetrix' from itemHierarchy where description = 'plates';
+insert into itemhierarchy (itemhierarchyid,parentid,description)
+select 0,itemHierarchyID,'andymark' from itemHierarchy where description = 'plates';
+
+#InventoryItem Table
+insert into inventoryItem values (0,10004,10000,'continuous servo 1',9.99,10);
+insert into inventoryItem values (0,10005,10001,'180-degree servo 1',5.99,10);
+insert into inventoryItem values (0,10006,10000,'omni wheel 1',19.99,10);
+insert into inventoryItem values (0,10007,10000,'standard wheel 1',14.99,10);
+insert into inventoryItem values (0,10007,10000,'tetrix plate 4x6',1.99,10);
+insert into inventoryItem values (0,10007,10002,'andymark plate 2x12',2.99,10);
+
+
+#TeamRequest Table
+# each team wants 1 'limited quantity' 180-degree servo, set Frank as the approver of all of them.  Type is purchase, status is pending
+insert into teamrequest (teamRequestID,itemID,teamID,userID,requestTypeID,requestStatusID,TransactionID,Quantity,Justification,statusdate,creationdate)
+select 0,itemID,teamID,userID,requestTypeID,requestStatusID,NULL,1,'because I want it','2018-09-01 12:00','2018-09-01 12:00'
+from inventoryItem join team join users join requesttype join requeststatus join itemrestriction on itemrestriction.itemRestrictionID = inventoryitem.itemRestrictionID
+where itemrestriction.description = 'limitedquantity'
+and users.username = 'frank'
+and requesttype.description = 'purchase'
+and requeststatus.description = 'pending';
+
+
+#inventoryAssignment table
+# every team gets 1 of each item
+insert into inventoryassignment (inventoryassignmentId,itemid,teamid,quantity)
+select 0,itemid,teamid,1
+from inventoryitem join team;

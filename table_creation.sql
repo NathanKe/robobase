@@ -144,7 +144,7 @@ create table inventoryItem(
 	itemRestrictionID int not null,
 	constraint foreign key (itemRestrictionID) references itemRestriction(itemRestrictionID),
 	description varchar(50) not null,
-	unitPrice decimal(3,2) not null default 0.0,
+	unitPrice decimal(5,2) not null default 0.0,
 	totalQuantity int not null default 0
 ) auto_increment=10000 engine=INNODB;
 
@@ -160,7 +160,7 @@ create table teamRequest(
 	constraint foreign key (requestTypeID) references requestType(requestTypeID),
 	requestStatusID int not null,
 	constraint foreign key (requestStatusID) references requestStatus(requestStatusID),
-	transactionID int not null,
+	transactionID int,
 	constraint foreign key (transactionID) references ledgerTransaction(transactionID),
 	quantity int not null default 1,
 	justification text not null,
