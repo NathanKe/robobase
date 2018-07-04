@@ -11,8 +11,11 @@ function loginClick(){
 		contentType:"application/json; charset=utf-8",
 		dataType:"json",
 		complete: function(data){
-			console.log(data.responseJSON);
-			window.sessionStorage.accessToken = data.responseJSON.token;
+			if(data.status == 200){
+				location = "http://localhost:8000/menu"
+			}else if(data.status == 400){
+				alert(data.responseJSON.err);
+			}
 		}
 	});
 }
