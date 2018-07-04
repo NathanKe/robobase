@@ -20,6 +20,15 @@ app.use(function(req, res, next) {
 	next();
 });
 
+// single shared connection
+var connection = mysql.createConnection({
+		host: "localhost",
+		user: "root",
+		password:"",
+		database: "robobase"
+});
+connection.connect();
+
 app.get('/',(req,res)=>{
 	console.log("hit root!");
 	res.render('index');
@@ -58,39 +67,39 @@ app.get('/test',(req,res)=>{
 	console.log("hit!");
 });
 
-app.post('/login',(req,response)=>{
-	var connection = mysql.createConnection({
-			host: "localhost",
-			user: "root",
-			password:"",
-			database: "robobase"
-	});
-	
-	connection.connect((err)=>{
+app.get('/roleClass',isAuthenticated,(request,response)=>{
+	var bearer = jwt.decode(request.cookies.token,jwtSecret).bearer;
+	var queryString = "select RoleClass from users join userRoleAssignment on users.userID = userroleassignment.userID join role on userroleassignment.roleID = role.roleID where userName = '"+bearer+"'";
+	connection.query(queryString,(err,result)=>{
 		if(err)throw err;
-		
-		var username = req.body.username;
-		var queryString = "select * from users where username = '"+username+"'";
-		connection.query(queryString,(err,result)=>{
-			if(err)throw err;
-			if(result.length != 1){
-				response.status(400)
-				response.send({err:"Username Not Found"})
+		response.status(200);
+		response.send({roleClass:result[0].RoleClass})
+	});
+});
+
+app.post('/login',(req,response)=>{
+	var username = req.body.username;
+	var queryString = "select * from users where username = '"+username+"'";
+	connection.query(queryString,(err,result)=>{
+		if(err)throw err;
+		if(result.length != 1){
+			response.status(400)
+			response.send({err:"Username Not Found"})
+		}else{
+			var salt = result[0].salt;
+			var pswdHash = crypto.createHash('sha512').update(salt+req.body.password).digest('hex');
+			
+			if(pswdHash == result[0].pswd){
+				var token = jwt.sign({bearer:username},jwtSecret,{expiresIn:'15m'});
+				console.log(token);
+				response.status(200);
+				response.cookie('token',token);
+				response.send();
 			}else{
-				var salt = result[0].salt;
-				var pswdHash = crypto.createHash('sha512').update(salt+req.body.password).digest('hex');
-				
-				if(pswdHash == result[0].pswd){
-					var token = jwt.sign({data:username},jwtSecret,{expiresIn:'15m'});
-					response.status(200);
-					response.cookie('token',token);
-					response.send();
-				}else{
-					response.status(400);
-					response.send({err:"AuthFail"});
-				}
+				response.status(400);
+				response.send({err:"AuthFail"});
 			}
-		});
+		}
 	});
 });
 
