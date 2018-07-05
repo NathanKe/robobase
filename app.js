@@ -31,10 +31,6 @@ var connection = mysql.createConnection({
 });
 connection.connect();
 
-app.get('/',(request,response)=>{
-	console.log("hit root!");
-	response.render('index');
-});
 
 //https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens#route-middleware-to-protect-api-routes
 //https://scotch.io/tutorials/route-middleware-to-check-if-a-user-is-authenticated-in-node-js
@@ -43,6 +39,7 @@ function isAuthenticated(request,response,next){
 	if(token){
 		jwt.verify(token,jwtSecret,(err,decoded)=>{
 			if(err){
+				console.log('auth fail - bad token');
 				response.redirect('/');
 			}else{
 				console.log('auth pass');
@@ -50,41 +47,34 @@ function isAuthenticated(request,response,next){
 			}
 		});
 	}else{
+		console.log('auth fail - no token');
 		response.redirect('/');
 	}
 }
-function roleClass(request,response,next){
+function getRoleClass(request,response,next){
 	var bearer = jwt.decode(request.cookies.token,jwtSecret).bearer;
-	var queryString = "select RoleClass from users join userRoleAssignment on users.userID = userroleassignment.userID join role on userroleassignment.roleID = role.roleID where userName = '"+bearer+"'";
+	var queryString = "select roleClass from users join userRoleAssignment on users.userID = userroleassignment.userID join role on userroleassignment.roleID = role.roleID where userName = '"+bearer+"'";
 	connection.query(queryString,(err,result)=>{
 		if(err)throw err;
-		response.locals.roleClass = result[0].RoleClass;
+		response.locals.roleClass = result[0].roleClass;
 		next();
 	});
 }
 
-app.get('/menu',isAuthenticated,roleClass,(request,response)=>{
-	switch(response.locals.roleClass){
-		case 'Student':
-			response.render('menu');
-		case 'Coach':
-			response.redirect('/');
-		case 'Admin':
-			response.redirect('/');
-	}
+app.get('/',(request,response)=>{
+	console.log("hit root!");
+	response.render('index');
 });
-
-app.get('/users',isAuthenticated,(request,response)=>{
-	connection.query("select userName from users",(err,data)=>{
-		if(err)throw err;
-		response.send(JSON.stringify(data));
-	});
-});
-
 app.get('/test',(request,response)=>{
 	console.log("hit!");
 });
 
+//
+// Get un/pw from client
+// Query username, match client password + salt against user table password
+// Send message on success
+// On fail end - call handler on client side calls menu endpoint
+//
 app.post('/login',(request,response)=>{
 	var username = request.body.username;
 	var queryString = "select * from users where username = '"+username+"'";
@@ -98,17 +88,34 @@ app.post('/login',(request,response)=>{
 			var pswdHash = crypto.createHash('sha512').update(salt+request.body.password).digest('hex');
 			
 			if(pswdHash == result[0].pswd){
-				var token = jwt.sign({bearer:username},jwtSecret,{expiresIn:'15m'});
-				console.log(token);
 				response.status(200);
+				var token = jwt.sign({bearer:username},jwtSecret,{expiresIn:'15m'});
 				response.cookie('token',token);
-				response.send();
+				response.end();
 			}else{
 				response.status(400);
 				response.send({err:"AuthFail"});
 			}
 		}
 	});
+});
+
+app.get('/menu',isAuthenticated,getRoleClass,(request,response)=>{
+	switch(response.locals.roleClass){
+		case 'Student':
+			response.render('menu-student');
+			break;
+		case 'Coach':
+			response.redirect('/');
+			break;
+		case 'Admin':
+			response.redirect('/');
+			break;
+	}
+});
+
+app.get('/eventAvailability',(request,response)=>{
+	response.render('eventAvailability-page');
 });
 
 console.log('running');
