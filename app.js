@@ -42,12 +42,10 @@ function isAuthenticated(request,response,next){
 				console.log('auth fail - bad token');
 				response.redirect('/');
 			}else{
-				console.log('auth pass');
 				next();
 			}
 		});
 	}else{
-		console.log('auth fail - no token');
 		response.redirect('/');
 	}
 }
@@ -60,14 +58,35 @@ function getRoleClass(request,response,next){
 		next();
 	});
 }
+function hasTask(findTask){
+	return (request,response,next)=>{
+		var bearer = jwt.decode(request.cookies.token,jwtSecret).bearer;
+		var queryString = "select taskName from task join roletaskassignment on roletaskassignment.taskID = task.taskID join role on role.roleID = roletaskassignment.roleID join userroleassignment on userroleassignment.roleID = role.roleID join users on users.userID = userroleassignment.userID where username = '"+bearer+"'";
+		connection.query(queryString,(err,result)=>{
+			if(err)throw err;
+			var found = false;
+			for(var i = 0;i<result.length;i++){
+				if(result[i].taskName == findTask){
+					var found = true;
+					break;
+				}
+			}
+			
+			if(found){
+				next();
+			}else{
+				response.locals.taskError = "Missing Task"
+				next();
+			}
+		})
+	}
+}
 
 app.get('/',(request,response)=>{
 	console.log("hit root!");
 	response.render('index');
 });
-app.get('/test',(request,response)=>{
-	console.log("hit!");
-});
+
 
 //
 // Get un/pw from client
@@ -103,7 +122,7 @@ app.post('/login',(request,response)=>{
 app.get('/menu',isAuthenticated,getRoleClass,(request,response)=>{
 	switch(response.locals.roleClass){
 		case 'Student':
-			response.render('menu-student');
+			response.render('menu-student',{taskError:""});
 			break;
 		case 'Coach':
 			response.redirect('/');
@@ -114,8 +133,28 @@ app.get('/menu',isAuthenticated,getRoleClass,(request,response)=>{
 	}
 });
 
-app.get('/eventAvailability',(request,response)=>{
-	response.render('eventAvailability-page');
+app.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,response)=>{
+	if(response.locals.taskError){
+		response.render('menu-student',{taskError:response.locals.taskError});
+	}else{
+		response.render('eventAvailability');
+	}
+});
+
+app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{
+	if(response.locals.taskError){
+		response.render('menu-student',{taskError:response.locals.taskError});
+	}else{
+		response.render('studentCheckout');
+	}
+});
+
+app.get('/partRequest',isAuthenticated,hasTask('partRequest'),(request,response)=>{
+	if(response.locals.taskError){
+		response.render('menu-student',{taskError:response.locals.taskError});
+	}else{
+		response.render('partRequest');
+	}
 });
 
 console.log('running');

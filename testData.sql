@@ -121,6 +121,7 @@ insert into task values (0,'inventory','Manage inventory');
 #student
 insert into task values (0,'eventAvail','Update event availability');
 insert into task values (0,'partCheckout','Check-out parts');
+insert into task values (0,'partRequest','Submit Part Request');
 
 #RoleTaskAssignment Table
 #admin
@@ -145,9 +146,18 @@ insert into roleTaskAssignment values (0,@rid,@tid);
 set @rid = (select roleid from role where rolename = 'Student');
 set @tid = (select taskid from task where taskname = 'eventAvail');
 insert into roleTaskAssignment values (0,@rid,@tid);
+set @rid = (select roleid from role where rolename = 'Captain');
+set @tid = (select taskid from task where taskname = 'partCheckout');
+insert into roleTaskAssignment values (0,@rid,@tid);
 #captain
 set @rid = (select roleid from role where rolename = 'Captain');
 set @tid = (select taskid from task where taskname = 'partCheckout');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @rid = (select roleid from role where rolename = 'Captain');
+set @tid = (select taskid from task where taskname = 'eventAvail');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @rid = (select roleid from role where rolename = 'Captain');
+set @tid = (select taskid from task where taskname = 'partRequest');
 insert into roleTaskAssignment values (0,@rid,@tid);
 
 #Event Table

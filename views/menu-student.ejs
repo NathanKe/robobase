@@ -3,19 +3,19 @@
 <head>
 	<meta charset="utf-8">
 	<title>Robobase - Student Menu</title>
-	<script src="menu-student-handlers.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body>
 	<p>Student Menu</p>
-	
-	<button type="button" onclick="eventAvailClicked()">Event Availability</button>
+	<p><%= taskError %></p>
 	<br>
-	<button type="button" onclick="checkOutClicked()">Checkout / Checkin Parts</button>
+	<a href="/eventAvailability" class='nav'>Event Availability</a>
 	<br>
-	<button type="button" onclick="partRequestClicked()">Submit Part Request</button>
+	<a href="/studentCheckOut" class='nav'>Part Checkout/Checkin</a>
+	<br>
+	<a href="/partRequest" class='nav'>Submit Part Request</a>
 	<br>
 </body>
 
