@@ -25,7 +25,7 @@ app.use(function(request, response, next) {
 	next();
 });
 
-// single shared connection
+// database js encapsulates all functions to/from database
 var db = require('./database.js');
 
 
