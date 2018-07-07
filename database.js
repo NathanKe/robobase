@@ -24,7 +24,6 @@ exports.getRoleClass = (user,callback)=>{
 		if(err){
 			callback(true,{})
 		}else{
-			console.log(result);
 			callback(false,result[0].roleClass);
 		}
 	});
@@ -62,4 +61,22 @@ exports.postEventAvailability = (userID,eventName,availability,callback)=>{
 			callback(false,result);
 		}
 	})
+}
+
+exports.reportEventAvailability = (callback)=>{
+	var queryString = `
+		select eventName,teamname,username,availability from eventavailability 
+		join event on eventavailability.eventID = event.eventID 
+		join users on eventavailability.userID = users.userid
+		join teamuserassignment on users.userid = teamuserassignment.userID
+		join team on team.teamid = teamuserassignment.teamid
+		order by eventname,teamname,username;`
+	
+	pool.query(queryString,(err,result)=>{
+		if(err){
+			callback(true,{})
+		}else{
+			callback(false,result);
+		}
+	});
 }

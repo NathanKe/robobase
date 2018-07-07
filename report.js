@@ -1,10 +1,13 @@
 var express = require('express');
 var router = express.Router();
+var db = require('./database.js');
 
 router.get('/eventAvailability',(request,response)=>{
-	console.log(jwtSecret);
-	response.status(200);
-	response.send("asdf");
+	db.reportEventAvailability((err,result)=>{
+		if(err)throw err;
+		response.status(200);
+		response.send(result);
+	});
 });
 
 module.exports = router;
