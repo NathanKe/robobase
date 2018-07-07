@@ -15,6 +15,10 @@ app.use(bodyParser.json());
 app.set('view engine','ejs');
 app.use(express.static('public'));
 
+
+//Import other file routes
+app.use('/report',require('./report'));
+
 // Allow 'Cross Origin' stuff.  
 app.use(function(request, response, next) {
 	response.header("Access-Control-Allow-Origin", "*");
@@ -120,12 +124,13 @@ app.post('/login',(request,response)=>{
 });
 
 app.get('/menu',isAuthenticated,getRoleClass,(request,response)=>{
+	username = jwt.decode(request.cookies.token,jwtSecret).bearer;
 	switch(response.locals.roleClass){
 		case 'Student':
-			response.render('menu-student',{taskError:""});
+			response.render('menu-student',{taskError:"",username:username});
 			break;
 		case 'Coach':
-			response.redirect('/');
+			response.render('menu-coach',{taskError:"",username:username});
 			break;
 		case 'Admin':
 			response.redirect('/');
@@ -169,7 +174,7 @@ app.post('/postAvailabilities',isAuthenticated,(request,response)=>{
 
 app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{
 	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError});
+		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.decode(request.cookies.token,jwtSecret).bearer});
 	}else{
 		response.render('studentCheckout');
 	}
@@ -177,7 +182,7 @@ app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,resp
 
 app.get('/partRequest',isAuthenticated,hasTask('partRequest'),(request,response)=>{
 	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError});
+		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.decode(request.cookies.token,jwtSecret).bearer});
 	}else{
 		response.render('partRequest');
 	}
