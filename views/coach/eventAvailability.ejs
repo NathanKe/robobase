@@ -5,14 +5,18 @@
 	<title>Robobase - Event Availability</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	
+	<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+	<script src="../coach/eventAvailability.js"></script>
 </head>
 
-<body>
+<body onload="pullEventData()">
 	<p>Event Availability Report</p>
 	
-	<div id="availTable">
+	<table id="availTable">
 	
-	</div>
+	</table>
 </body>
 
 </html>
