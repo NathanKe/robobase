@@ -118,6 +118,7 @@ insert into task values (0,'roster','Manage team roster');
 insert into task values (0,'user-student','Manage student users');
 insert into task values (0,'attendance','Record and view attendance');
 insert into task values (0,'inventory','Manage inventory');
+insert into task values (0,'reportEventAvail','Manage inventory');
 #student
 insert into task values (0,'eventAvail','Update event availability');
 insert into task values (0,'partCheckout','Check-out parts');
@@ -141,6 +142,8 @@ insert into roleTaskAssignment values (0,@rid,@tid);
 set @tid = (select taskid from task where taskname = 'attendance');
 insert into roleTaskAssignment values (0,@rid,@tid);
 set @tid = (select taskid from task where taskname = 'inventory');
+insert into roleTaskAssignment values (0,@rid,@tid);
+set @tid = (select taskid from task where taskname = 'reportEventAvail');
 insert into roleTaskAssignment values (0,@rid,@tid);
 #student
 set @rid = (select roleid from role where rolename = 'Student');

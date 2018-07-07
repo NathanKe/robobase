@@ -24,7 +24,7 @@ function hasTask(findTask){
 		
 		db.hasTask(bearer,findTask,(err,result)=>{
 			if(err)throw err;
-			if(result = 1){
+			if(result == 1){
 				next();
 			}else{
 				response.locals.taskError = "Missing Task"
@@ -37,7 +37,7 @@ function hasTask(findTask){
 
 router.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,response)=>{
 	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError});
+		response.redirect('back');
 	}else{
 		response.render('./student/eventAvailability');
 	}
@@ -69,7 +69,7 @@ router.post('/postAvailabilities',isAuthenticated,(request,response)=>{
 
 router.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{
 	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.bearer(request.cookies.token)});
+		response.redirect('back');
 	}else{
 		response.render('./student/studentCheckout');
 	}
@@ -77,7 +77,7 @@ router.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,r
 
 router.get('/partRequest',isAuthenticated,hasTask('partRequest'),(request,response)=>{
 	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.bearer(request.cookies.token)});
+		response.redirect('back');
 	}else{
 		response.render('./student/partRequest');
 	}

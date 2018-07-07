@@ -16,6 +16,7 @@ app.use(express.static('public'));
 //Import other file routes
 app.use('/report',require('./report.js'));
 app.use('/student',require('./student.js'));
+app.use('/coach',require('./coach.js'));
 
 // Allow 'Cross Origin' stuff.  
 app.use(function(request, response, next) {
