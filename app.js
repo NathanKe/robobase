@@ -108,7 +108,7 @@ app.post('/login',(request,response)=>{
 			
 			if(pswdHash == result[0].pswd){
 				response.status(200);
-				var token = jwt.sign({bearer:username},jwtSecret,{expiresIn:'15m'});
+				var token = jwt.sign({bearer:username,bearerID:result[0].userID},jwtSecret,{expiresIn:'15m'});
 				response.cookie('token',token);
 				response.end();
 			}else{
@@ -139,6 +139,26 @@ app.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,resp
 	}else{
 		response.render('eventAvailability');
 	}
+});
+
+app.get('/eventAvailabilityTable',(request,response)=>{
+	userID = jwt.decode(request.cookies.token,jwtSecret).bearerID;
+	
+	queryString = "select event.eventID,userID,availability,eventName,startTime,endTime,notes from event join eventAvailability on event.eventID = eventAvailability.eventID where keyEvent = 1 and userID = "+userID+";";
+	connection.query(queryString,(err,result)=>{
+		if(err)throw err;
+		response.status(200);
+		response.send(JSON.stringify(result));
+	});
+});
+app.post('/postAvailabilities',isAuthenticated,(request,response)=>{
+	userID = jwt.decode(request.cookies.token,jwtSecret).bearerID;
+	request.body.forEach((item,index)=>{
+		queryString = "update eventavailability set availability='"+item.availSelect+"' where eventID = (select eventID from event where eventName = '"+item.eventName+"') and userID = "+userID;
+		connection.query(queryString,(err,result)=>{
+			if(err)throw err;
+		});
+	});
 });
 
 app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{

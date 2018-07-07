@@ -172,7 +172,7 @@ insert into event values (0,'Competition Option 3',1,'2018-09-05 08:30','2018-09
 #Event Availability Table
 # note - only interesting for key events - only students answer - default unavilable
 insert into eventAvailability (eventAvailabilityID,userID,eventID,availability)
-select 0,users.userID,eventID,0
+select 0,users.userID,eventID,''
 from event 
 	join users 
     join userRoleAssignment on users.userID = userRoleAssignment.userID

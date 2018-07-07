@@ -53,7 +53,7 @@ create table roleTaskAssignment (
 
 create table event (
 	eventID int not null auto_increment primary key,
-	eventName varchar(50) not null,
+	eventName varchar(50) not null unique,
 	keyEvent bool not null,
 	startTime datetime not null,
 	endTime datetime not null,
@@ -66,7 +66,7 @@ create table eventAvailability (
 	constraint foreign key (userID) references users(userID),
 	eventID int not null,
 	constraint foreign key (eventID) references event(eventID),
-	availability bool
+	availability enum('','Yes','No')
 ) auto_increment=10000 engine=INNODB;
 
 create table attendanceCode (
