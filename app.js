@@ -61,8 +61,8 @@ function getRoleClass(request,response,next){
 function hasTask(findTask){
 	return (request,response,next)=>{
 		var bearer = jwt.decode(request.cookies.token,jwtSecret).bearer;
-		var queryString = "select taskName from task join roletaskassignment on roletaskassignment.taskID = task.taskID join role on role.roleID = roletaskassignment.roleID join userroleassignment on userroleassignment.roleID = role.roleID join users on users.userID = userroleassignment.userID where username = '"+bearer+"'";
-		connection.query(queryString,(err,result)=>{
+		var queryString = "select taskName from task join roletaskassignment on roletaskassignment.taskID = task.taskID join role on role.roleID = roletaskassignment.roleID join userroleassignment on userroleassignment.roleID = role.roleID join users on users.userID = userroleassignment.userID where username = ?";
+		connection.query(queryString,[bearer],(err,result)=>{
 			if(err)throw err;
 			var found = false;
 			for(var i = 0;i<result.length;i++){
@@ -96,8 +96,8 @@ app.get('/',(request,response)=>{
 //
 app.post('/login',(request,response)=>{
 	var username = request.body.username;
-	var queryString = "select * from users where username = '"+username+"'";
-	connection.query(queryString,(err,result)=>{
+	var queryString = "select * from users where username = ?";
+	connection.query(queryString,[username],(err,result)=>{
 		if(err)throw err;
 		if(result.length != 1){
 			response.status(400)
@@ -144,8 +144,8 @@ app.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,resp
 app.get('/eventAvailabilityTable',(request,response)=>{
 	userID = jwt.decode(request.cookies.token,jwtSecret).bearerID;
 	
-	queryString = "select event.eventID,userID,availability,eventName,startTime,endTime,notes from event join eventAvailability on event.eventID = eventAvailability.eventID where keyEvent = 1 and userID = "+userID+";";
-	connection.query(queryString,(err,result)=>{
+	queryString = "select event.eventID,userID,availability,eventName,startTime,endTime,notes from event join eventAvailability on event.eventID = eventAvailability.eventID where keyEvent = 1 and userID = ?;";
+	connection.query(queryString,[userID],(err,result)=>{
 		if(err)throw err;
 		response.status(200);
 		response.send(JSON.stringify(result));
@@ -154,8 +154,8 @@ app.get('/eventAvailabilityTable',(request,response)=>{
 app.post('/postAvailabilities',isAuthenticated,(request,response)=>{
 	userID = jwt.decode(request.cookies.token,jwtSecret).bearerID;
 	request.body.forEach((item,index)=>{
-		queryString = "update eventavailability set availability='"+item.availSelect+"' where eventID = (select eventID from event where eventName = '"+item.eventName+"') and userID = "+userID;
-		connection.query(queryString,(err,result)=>{
+		queryString = "update eventavailability set availability=? where eventID = (select eventID from event where eventName = ?) and userID = ?";
+		connection.query(queryString,[item.availSelect,item.eventName,userID],(err,result)=>{
 			if(err)throw err;
 		});
 	});
