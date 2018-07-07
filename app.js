@@ -153,12 +153,18 @@ app.get('/eventAvailabilityTable',(request,response)=>{
 });
 app.post('/postAvailabilities',isAuthenticated,(request,response)=>{
 	userID = jwt.decode(request.cookies.token,jwtSecret).bearerID;
+	var callCount = request.body.count;
+	var c = 0;
+	queryString = "update eventavailability set availability=? where eventID = (select eventID from event where eventName = ?) and userID = ?";
 	request.body.forEach((item,index)=>{
-		queryString = "update eventavailability set availability=? where eventID = (select eventID from event where eventName = ?) and userID = ?";
 		connection.query(queryString,[item.availSelect,item.eventName,userID],(err,result)=>{
 			if(err)throw err;
+			c++;
 		});
 	});
+	
+	while(c<callCount){}
+	response.end();
 });
 
 app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{

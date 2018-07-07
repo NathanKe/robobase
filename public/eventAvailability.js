@@ -62,5 +62,12 @@ function postAvailabilities(){
 		data:JSON.stringify(eventAvailData),
 		contentType:"application/json; charset=utf-8",
 		dataType:"json",
-	}).done(alert("updated"));
+		complete:function(data){
+			if(data.status == 200){
+				location = "http://localhost:8000/menu"
+			}else if(data.status == 400){
+				alert(data.responseJSON.err);
+			}
+		}
+	});
 }
