@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/eventAvailability',(request,response)=>{
-	console.log("hit");
+	console.log(jwtSecret);
 	response.status(200);
 	response.send("asdf");
 });
