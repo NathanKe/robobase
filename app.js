@@ -14,7 +14,8 @@ app.use(express.static('public'));
 
 
 //Import other file routes
-app.use('/report',require('./report'));
+app.use('/report',require('./report.js'));
+app.use('/student',require('./student.js'));
 
 // Allow 'Cross Origin' stuff.  
 app.use(function(request, response, next) {
@@ -55,21 +56,6 @@ function getRoleClass(request,response,next){
 		response.locals.roleClass = result;
 		next();
 	});
-}
-function hasTask(findTask){
-	return (request,response,next)=>{
-		var bearer = jwt.bearer(request.cookies.token);
-		
-		db.hasTask(bearer,findTask,(err,result)=>{
-			if(err)throw err;
-			if(result = 1){
-				next();
-			}else{
-				response.locals.taskError = "Missing Task"
-				next();
-			}
-		});
-	}
 }
 
 app.get('/',(request,response)=>{
@@ -121,54 +107,6 @@ app.get('/menu',isAuthenticated,getRoleClass,(request,response)=>{
 		case 'Admin':
 			response.redirect('/');
 			break;
-	}
-});
-
-app.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,response)=>{
-	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError});
-	}else{
-		response.render('eventAvailability');
-	}
-});
-
-app.get('/eventAvailabilityTable',(request,response)=>{
-	userID = jwt.bearerID(request.cookies.token);
-	
-	db.eventAvailability(userID,(err,result)=>{
-		if(err)throw err;
-		response.status(200);
-		response.send(JSON.stringify(result));
-	});
-});
-app.post('/postAvailabilities',isAuthenticated,(request,response)=>{
-	userID = jwt.bearerID(request.cookies.token);
-	var callCount = request.body.count;
-	var c = 0;
-	request.body.forEach((item,index)=>{
-		db.postEventAvailability(userID,item.eventName,item.availSelect,(err,result)=>{
-			if(err)throw err;
-			c++;
-		});
-	});
-	
-	while(c<callCount){/*wait*/}
-	response.end();
-});
-
-app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{
-	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.bearer(request.cookies.token)});
-	}else{
-		response.render('studentCheckout');
-	}
-});
-
-app.get('/partRequest',isAuthenticated,hasTask('partRequest'),(request,response)=>{
-	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.bearer(request.cookies.token)});
-	}else{
-		response.render('partRequest');
 	}
 });
 
