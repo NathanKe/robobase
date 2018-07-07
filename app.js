@@ -3,8 +3,6 @@ var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var jwt = require('jsonwebtoken');
-var jwtSecret = 'Shhhhhhhhhh';
 var crypto = require('crypto');
 
 //app settings
@@ -28,13 +26,16 @@ app.use(function(request, response, next) {
 // database js encapsulates all functions to/from database
 var db = require('./database.js');
 
+// jwt.js encapsulates json web token settings
+var jwt = require('./jwt.js');
+
 
 //https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens#route-middleware-to-protect-api-routes
 //https://scotch.io/tutorials/route-middleware-to-check-if-a-user-is-authenticated-in-node-js
 function isAuthenticated(request,response,next){
 	var token = request.cookies.token;
 	if(token){
-		jwt.verify(token,jwtSecret,(err,decoded)=>{
+		jwt.verify(token,(err,decoded)=>{
 			if(err){
 				console.log('auth fail - bad token');
 				response.redirect('/');
@@ -47,7 +48,7 @@ function isAuthenticated(request,response,next){
 	}
 }
 function getRoleClass(request,response,next){
-	var bearer = jwt.decode(request.cookies.token,jwtSecret).bearer;
+	var bearer = jwt.bearer(request.cookies.token);
 	
 	db.getRoleClass(bearer,(err,result)=>{
 		if(err)throw err;
@@ -57,7 +58,7 @@ function getRoleClass(request,response,next){
 }
 function hasTask(findTask){
 	return (request,response,next)=>{
-		var bearer = jwt.decode(request.cookies.token,jwtSecret).bearer;
+		var bearer = jwt.bearer(request.cookies.token);
 		
 		db.hasTask(bearer,findTask,(err,result)=>{
 			if(err)throw err;
@@ -97,7 +98,7 @@ app.post('/login',(request,response)=>{
 			
 			if(pswdHash == result[0].pswd){
 				response.status(200);
-				var token = jwt.sign({bearer:username,bearerID:result[0].userID},jwtSecret,{expiresIn:'15m'});
+				var token = jwt.sign({bearer:username,bearerID:result[0].userID},{expiresIn:'15m'});
 				response.cookie('token',token);
 				response.end();
 			}else{
@@ -109,7 +110,7 @@ app.post('/login',(request,response)=>{
 });
 
 app.get('/menu',isAuthenticated,getRoleClass,(request,response)=>{
-	username = jwt.decode(request.cookies.token,jwtSecret).bearer;
+	username = jwt.bearer(request.cookies.token);
 	switch(response.locals.roleClass){
 		case 'Student':
 			response.render('menu-student',{taskError:"",username:username});
@@ -132,7 +133,7 @@ app.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,resp
 });
 
 app.get('/eventAvailabilityTable',(request,response)=>{
-	userID = jwt.decode(request.cookies.token,jwtSecret).bearerID;
+	userID = jwt.bearerID(request.cookies.token);
 	
 	db.eventAvailability(userID,(err,result)=>{
 		if(err)throw err;
@@ -141,7 +142,7 @@ app.get('/eventAvailabilityTable',(request,response)=>{
 	});
 });
 app.post('/postAvailabilities',isAuthenticated,(request,response)=>{
-	userID = jwt.decode(request.cookies.token,jwtSecret).bearerID;
+	userID = jwt.bearerID(request.cookies.token);
 	var callCount = request.body.count;
 	var c = 0;
 	request.body.forEach((item,index)=>{
@@ -157,7 +158,7 @@ app.post('/postAvailabilities',isAuthenticated,(request,response)=>{
 
 app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{
 	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.decode(request.cookies.token,jwtSecret).bearer});
+		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.bearer(request.cookies.token)});
 	}else{
 		response.render('studentCheckout');
 	}
@@ -165,7 +166,7 @@ app.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,resp
 
 app.get('/partRequest',isAuthenticated,hasTask('partRequest'),(request,response)=>{
 	if(response.locals.taskError){
-		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.decode(request.cookies.token,jwtSecret).bearer});
+		response.render('menu-student',{taskError:response.locals.taskError,username:jwt.bearer(request.cookies.token)});
 	}else{
 		response.render('partRequest');
 	}

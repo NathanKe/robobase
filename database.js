@@ -24,6 +24,7 @@ exports.getRoleClass = (user,callback)=>{
 		if(err){
 			callback(true,{})
 		}else{
+			console.log(result);
 			callback(false,result[0].roleClass);
 		}
 	});
