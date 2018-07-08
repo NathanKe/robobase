@@ -149,7 +149,7 @@ insert into roleTaskAssignment values (0,@rid,@tid);
 set @rid = (select roleid from role where rolename = 'Student');
 set @tid = (select taskid from task where taskname = 'eventAvail');
 insert into roleTaskAssignment values (0,@rid,@tid);
-set @rid = (select roleid from role where rolename = 'Captain');
+set @rid = (select roleid from role where rolename = 'Student');
 set @tid = (select taskid from task where taskname = 'partCheckout');
 insert into roleTaskAssignment values (0,@rid,@tid);
 #captain

@@ -30,7 +30,12 @@ exports.getRoleClass = (user,callback)=>{
 }
 
 exports.hasTask = (user,task,callback)=>{
-	var queryString = "select taskName from task join roletaskassignment on roletaskassignment.taskID = task.taskID join role on role.roleID = roletaskassignment.roleID join userroleassignment on userroleassignment.roleID = role.roleID join users on users.userID = userroleassignment.userID where username = ? and taskName = ?";
+	queryString = `select taskName from task 
+	join roletaskassignment on roletaskassignment.taskID = task.taskID 
+	join role on role.roleID = roletaskassignment.roleID 
+	join userroleassignment on userroleassignment.roleID = role.roleID 
+	join users on users.userID = userroleassignment.userID 
+	where username = ? and taskName = ?`;
 	pool.query(queryString,[user,task],(err,result)=>{
 		if(err){
 			callback(true,{})
@@ -41,7 +46,9 @@ exports.hasTask = (user,task,callback)=>{
 }
 
 exports.eventAvailability = (userID,callback)=>{
-	queryString = "select event.eventID,userID,availability,eventName,startTime,endTime,notes from event join eventAvailability on event.eventID = eventAvailability.eventID where keyEvent = 1 and userID = ?;";
+	queryString = `select event.eventID,userID,availability,eventName,startTime,endTime,notes from event 
+	join eventAvailability on event.eventID = eventAvailability.eventID 
+	where keyEvent = 1 and userID = ?;`;
 	pool.query(queryString,[userID],(err,result)=>{
 		if(err){
 			callback(true,{})
@@ -52,7 +59,7 @@ exports.eventAvailability = (userID,callback)=>{
 }
 
 exports.postEventAvailability = (userID,eventName,availability,callback)=>{
-	var queryString = "update eventavailability set availability=? where eventID = (select eventID from event where eventName = ?) and userID = ?";
+	queryString = "update eventavailability set availability=? where eventID = (select eventID from event where eventName = ?) and userID = ?";
 	
 	pool.query(queryString,[availability,eventName,userID],(err,result)=>{
 		if(err){
@@ -64,8 +71,7 @@ exports.postEventAvailability = (userID,eventName,availability,callback)=>{
 }
 
 exports.reportEventAvailability = (callback)=>{
-	var queryString = `
-		select eventName,teamname,username,availability,startTime from eventavailability 
+	queryString = `select eventName,teamname,username,availability,startTime from eventavailability 
 		join event on eventavailability.eventID = event.eventID 
 		join users on eventavailability.userID = users.userid
 		join teamuserassignment on users.userid = teamuserassignment.userID
@@ -73,6 +79,35 @@ exports.reportEventAvailability = (callback)=>{
 		order by eventname,teamname,username;`
 	
 	pool.query(queryString,(err,result)=>{
+		if(err){
+			callback(true,{})
+		}else{
+			callback(false,result);
+		}
+	});
+}
+
+exports.reportInventoryAssignment = (userID,callback)=>{
+	queryString = `select itemHierarchy.description as category, inventoryitem.description as item, inventoryassignment.quantity as count from inventoryassignment
+	join inventoryitem on inventoryitem.itemID = inventoryassignment.itemID
+	join itemhierarchy on itemhierarchy.itemHierarchyID = inventoryitem.itemHierarchyID
+	join team on inventoryassignment.teamID = team.teamID 
+	join teamuserassignment on teamuserassignment.teamID = team.teamID 
+	where userID =?;`
+	
+	pool.query(queryString,[userID],(err,result)=>{
+		if(err){
+			callback(true,{})
+		}else{
+			callback(false,result);
+		}
+	});
+}
+
+exports.hierarchyChild = (hierarchyID,callback)=>{
+	queryString = `select * from itemHierarchy where parentID = ? and itemHierarchyID <> 10000;`
+	
+	pool.query(queryString,[hierarchyID],(err,result)=>{
 		if(err){
 			callback(true,{})
 		}else{

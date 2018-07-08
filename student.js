@@ -36,11 +36,11 @@ router.post('/postAvailabilities',auth.isAuthenticated,(request,response)=>{
 	response.end();
 });
 
-router.get('/studentCheckout',auth.isAuthenticated,auth.hasTask('partCheckout'),(request,response)=>{
+router.get('/partCheckout',auth.isAuthenticated,auth.hasTask('partCheckout'),(request,response)=>{
 	if(response.locals.taskError){
 		response.redirect('back');
 	}else{
-		response.render('./student/studentCheckout');
+		response.render('./student/partCheckout');
 	}
 });
 
