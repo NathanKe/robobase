@@ -56,6 +56,25 @@ function fillRootSelect(){
 	call.fail(()=>{console.log("fail")});
 }
 
+function fillParts(hierarchyID){
+	
+	var call = $.ajax({
+		type:"GET",
+		url:"../report/hierarchyParts?id="+hierarchyID,
+		dataType:"json"
+	})
+	
+	call.done((data)=>{
+		var partSelect = $('#parts');
+		partSelect.empty();
+		for(i=0;i<data.length;i++){
+			var opt = $('<option></option>').text(data[i].description).attr('value',data[i].itemID);
+			partSelect.append(opt);
+		}
+	});
+	call.fail(()=>{console.log("fail")});
+}
+
 function cascadeChildren(parentSel){
 	newSelect = $('<select></select>');
 	
@@ -87,4 +106,6 @@ function cascadeChildren(parentSel){
 	call.fail(()=>{console.log("fail")});
 	
 	$('#checkoutSelector').append(newSelect);
+	
+	fillParts(parentSelection);
 }

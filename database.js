@@ -115,3 +115,15 @@ exports.hierarchyChild = (hierarchyID,callback)=>{
 		}
 	});
 }
+
+exports.hierarchyParts = (hierarchyID,callback)=>{
+	queryString = `select * from inventoryitem where itemHierarchyID = ?`;
+	
+	pool.query(queryString,[hierarchyID],(err,result)=>{
+		if(err){
+			callback(true,{})
+		}else{
+			callback(false,result);
+		}
+	});
+}

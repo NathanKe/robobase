@@ -30,5 +30,14 @@ router.get('/hierarchyChild',(request,response)=>{
 	});
 });
 
+router.get('/hierarchyParts',(request,response)=>{
+	nodeID = request.query.id;
+	db.hierarchyParts(nodeID,(err,result)=>{
+		if(err)throw err;
+		response.status(200);
+		response.send(result);
+	});
+});
+
 
 module.exports = router;
