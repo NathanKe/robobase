@@ -65,7 +65,7 @@ exports.postEventAvailability = (userID,eventName,availability,callback)=>{
 
 exports.reportEventAvailability = (callback)=>{
 	var queryString = `
-		select eventName,teamname,username,availability from eventavailability 
+		select eventName,teamname,username,availability,startTime from eventavailability 
 		join event on eventavailability.eventID = event.eventID 
 		join users on eventavailability.userID = users.userid
 		join teamuserassignment on users.userid = teamuserassignment.userID
