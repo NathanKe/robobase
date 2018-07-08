@@ -31,36 +31,11 @@ var db = require('./database.js');
 // jwt.js encapsulates json web token settings
 var jwt = require('./jwt.js');
 
+// authMiddle.js contains middleware authentication functions (i.e. isAuthenticated)
+var auth = require('./authMiddle.js');
 
-//https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens#route-middleware-to-protect-api-routes
-//https://scotch.io/tutorials/route-middleware-to-check-if-a-user-is-authenticated-in-node-js
-function isAuthenticated(request,response,next){
-	var token = request.cookies.token;
-	if(token){
-		jwt.verify(token,(err,decoded)=>{
-			if(err){
-				console.log('auth fail - bad token');
-				response.redirect('/');
-			}else{
-				next();
-			}
-		});
-	}else{
-		response.redirect('/');
-	}
-}
-function getRoleClass(request,response,next){
-	var bearer = jwt.bearer(request.cookies.token);
-	
-	db.getRoleClass(bearer,(err,result)=>{
-		if(err)throw err;
-		response.locals.roleClass = result;
-		next();
-	});
-}
 
 app.get('/',(request,response)=>{
-	console.log("hit root!");
 	response.render('index');
 });
 
@@ -96,7 +71,7 @@ app.post('/login',(request,response)=>{
 	});
 });
 
-app.get('/menu',isAuthenticated,getRoleClass,(request,response)=>{
+app.get('/menu',auth.isAuthenticated,auth.getRoleClass,(request,response)=>{
 	username = jwt.bearer(request.cookies.token);
 	switch(response.locals.roleClass){
 		case 'Student':

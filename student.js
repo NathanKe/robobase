@@ -2,40 +2,9 @@ var express = require('express');
 var router = express.Router();
 var db = require('./database.js');
 var jwt = require('./jwt.js');
+var auth = require('./authMiddle.js');
 
-function isAuthenticated(request,response,next){
-	var token = request.cookies.token;
-	if(token){
-		jwt.verify(token,(err,decoded)=>{
-			if(err){
-				console.log('auth fail - bad token');
-				response.redirect('/');
-			}else{
-				next();
-			}
-		});
-	}else{
-		response.redirect('/');
-	}
-}
-function hasTask(findTask){
-	return (request,response,next)=>{
-		var bearer = jwt.bearer(request.cookies.token);
-		
-		db.hasTask(bearer,findTask,(err,result)=>{
-			if(err)throw err;
-			if(result == 1){
-				next();
-			}else{
-				response.locals.taskError = "Missing Task"
-				next();
-			}
-		});
-	}
-}
-
-
-router.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,response)=>{
+router.get('/eventAvailability',auth.isAuthenticated,auth.hasTask('eventAvail'),(request,response)=>{
 	if(response.locals.taskError){
 		response.redirect('back');
 	}else{
@@ -43,7 +12,7 @@ router.get('/eventAvailability',isAuthenticated,hasTask('eventAvail'),(request,r
 	}
 });
 
-router.get('/eventAvailabilityTable',(request,response)=>{
+router.get('/eventAvailabilityTable',auth.isAuthenticated,(request,response)=>{
 	userID = jwt.bearerID(request.cookies.token);
 	
 	db.eventAvailability(userID,(err,result)=>{
@@ -52,7 +21,7 @@ router.get('/eventAvailabilityTable',(request,response)=>{
 		response.send(JSON.stringify(result));
 	});
 });
-router.post('/postAvailabilities',isAuthenticated,(request,response)=>{
+router.post('/postAvailabilities',auth.isAuthenticated,(request,response)=>{
 	userID = jwt.bearerID(request.cookies.token);
 	var callCount = request.body.count;
 	var c = 0;
@@ -67,7 +36,7 @@ router.post('/postAvailabilities',isAuthenticated,(request,response)=>{
 	response.end();
 });
 
-router.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,response)=>{
+router.get('/studentCheckout',auth.isAuthenticated,auth.hasTask('partCheckout'),(request,response)=>{
 	if(response.locals.taskError){
 		response.redirect('back');
 	}else{
@@ -75,7 +44,7 @@ router.get('/studentCheckout',isAuthenticated,hasTask('partCheckout'),(request,r
 	}
 });
 
-router.get('/partRequest',isAuthenticated,hasTask('partRequest'),(request,response)=>{
+router.get('/partRequest',auth.isAuthenticated,auth.hasTask('partRequest'),(request,response)=>{
 	if(response.locals.taskError){
 		response.redirect('back');
 	}else{
