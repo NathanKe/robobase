@@ -129,14 +129,19 @@ function outUpdateAvailQty(){
 		$('#checkoutButton').prop('disabled',false);
 		
 		availQty = data[0].availQty;
-		if(availQty != 0){
+		if(availQty > 0){
 			for(i=1;i<=availQty;i++){
 				var opt = $('<option></option>').text(i).attr('value',i);
 				qtySelect.append(opt);
 			}
-		}else{
+		}else if(availQty == 0){
 			$('#checkoutButton').prop('disabled',true);
 			qtySelect.append($('<option></option>').text("0").attr('value',0))
+			qtySelect.attr('disabled',true);
+		}else if(availQty == -1){
+			//-1 is a db marker return for restricted item
+			$('#checkoutButton').prop('disabled',true);
+			qtySelect.append($('<option></option>').text("RESTRICTED").attr('value',0))
 			qtySelect.attr('disabled',true);
 		}
 	});

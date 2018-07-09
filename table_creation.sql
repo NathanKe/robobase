@@ -17,7 +17,7 @@ create table team (
 
 create table teamUserAssignment(
     teamID int not null,
-    userID int not null,
+    userID int not null unique,
     primary key(teamid,userid),
 	constraint foreign key (teamID) references team(teamID),
 	constraint foreign key (userID) references users(userID)
@@ -141,7 +141,7 @@ create table inventoryItem(
 	itemID int not null auto_increment primary key,
 	itemHierarchyID int not null,
 	constraint foreign key (itemHierarchyID) references itemHierarchy(itemHierarchyID),
-	itemRestrictionID int not null,
+	itemRestrictionID int not null default 10000,
 	constraint foreign key (itemRestrictionID) references itemRestriction(itemRestrictionID),
 	description varchar(50) not null,
 	unitPrice decimal(5,2) not null default 0.0,

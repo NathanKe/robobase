@@ -130,9 +130,13 @@ exports.hierarchyParts = (hierarchyID,callback)=>{
 
 exports.itemAvailCount = (itemID,callback)=>{
 	queryString = `
-		select totalquantity-assignedQty as availQty 
-		from (select sum(quantity) as assignedQty from inventoryassignment where itemid = ?) as assigned 
-		join inventoryitem where itemid= ?;`;
+		select ifnull(
+			(select totalquantity-assignedQty as availQty 
+			from (select sum(quantity) as assignedQty from inventoryassignment where itemid = ?) as assigned
+			join inventoryitem 
+			join itemrestriction on itemrestriction.itemRestrictionID = inventoryitem.itemRestrictionID
+			where itemid= ? and itemrestriction.itemRestrictionID = 10000)
+		,-1) as availQty`;
 	
 	pool.query(queryString,[itemID,itemID],(err,result)=>{
 		if(err){
