@@ -41,8 +41,17 @@ router.get('/hierarchyParts',(request,response)=>{
 
 router.get('/itemAvailCount',(request,response)=>{
 	itemid = request.query.itemid;
-	console.log(itemid);
 	db.itemAvailCount(itemid,(err,result)=>{
+		if(err)throw err;
+		response.status(200);
+		response.send(result);
+	});
+});
+
+router.get('/itemAssignedCount',(request,response)=>{
+	itemid = request.query.itemid;
+	userid = jwt.bearerID(request.cookies.token)
+	db.itemAssignedCount(itemid,userid,(err,result)=>{
 		if(err)throw err;
 		response.status(200);
 		response.send(result);

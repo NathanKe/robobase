@@ -16,27 +16,48 @@
 	<h1>Checkout/Checkin</h1>
 	
 	<div>
-		<p>Current Inventory</p>
+		<h2>Current Inventory</h2>
 		<table id="inventoryTable"></table>
 	</div>
 	
 	<div>
+		<h2>Checkout</h2>
 		<div id="checkoutSelector">
 			<p>Hierarchy</p>
-			<select id="rootChildren" data-level=0 onChange="cascadeChildren(this)">
+			<select id="outRootChildren" data-level=0 onChange="outCascadeChildren(this)">
 				<option value=""></option>
 			</select>
 		</div>
 		<div>
 			<p>Part</p>
-			<select id="part" onChange="updateAvailQty()"></select>
+			<select id="outPart" onChange="outUpdateAvailQty()"></select>
 		</div>
 		<div>
 			<p>Quantity</p>
-			<select id="quantity"></select>
+			<select id="outQuantity"></select>
 		</div>
 		<div>
 			<button id="checkoutButton" type="button" onclick="postCheckout()">Checkout!</button>
+		</div>
+	</div>
+	<div>
+		<h2>Checkin</h2>
+		<div id="checkinSelector">
+			<p>Hierarchy</p>
+			<select id="inRootChildren" data-level=0 onChange="inCascadeChildren(this)">
+				<option value=""></option>
+			</select>
+		</div>
+		<div>
+			<p>Part</p>
+			<select id="inPart" onChange="inUpdateAvailQty()"></select>
+		</div>
+		<div>
+			<p>Quantity</p>
+			<select id="inQuantity"></select>
+		</div>
+		<div>
+			<button id="checkinButton" type="button" onclick="postCheckin()">Checkin!</button>
 		</div>
 	</div>
 </body>

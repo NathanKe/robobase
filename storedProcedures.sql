@@ -1,4 +1,4 @@
-drop procedure assign_inventory;
+drop procedure if exists assign_inventory;
 delimiter //
 create procedure assign_inventory (
 	in inuserid int,

@@ -143,6 +143,21 @@ exports.itemAvailCount = (itemID,callback)=>{
 	});
 }
 
+exports.itemAssignedCount = (itemID,userid,callback)=>{
+	queryString = `
+		select quantity from inventoryassignment 
+		join teamuserassignment on inventoryassignment.teamid = teamuserassignment.teamid 
+		where itemid = ? and userid = ?;`
+	
+	pool.query(queryString,[itemID,userid],(err,result)=>{
+		if(err){
+			callback(true,{})
+		}else{
+			callback(false,result);
+		}
+	});
+}
+
 exports.postCheckout = (userid,itemid,quantity,callback)=>{
 	queryString = `call assign_inventory(?,?,?)`
 	
