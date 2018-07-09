@@ -39,5 +39,14 @@ router.get('/hierarchyParts',(request,response)=>{
 	});
 });
 
+router.get('/itemAvailCount',(request,response)=>{
+	itemid = request.query.itemid;
+	console.log(itemid);
+	db.itemAvailCount(itemid,(err,result)=>{
+		if(err)throw err;
+		response.status(200);
+		response.send(result);
+	});
+});
 
 module.exports = router;

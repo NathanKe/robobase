@@ -259,8 +259,8 @@ insert into inventoryItem values (0,10004,10000,'continuous servo 1',9.99,10);
 insert into inventoryItem values (0,10005,10001,'180-degree servo 1',5.99,10);
 insert into inventoryItem values (0,10006,10000,'omni wheel 1',19.99,10);
 insert into inventoryItem values (0,10007,10000,'standard wheel 1',14.99,10);
-insert into inventoryItem values (0,10007,10000,'tetrix plate 4x6',1.99,10);
-insert into inventoryItem values (0,10007,10002,'andymark plate 2x12',2.99,10);
+insert into inventoryItem values (0,10008,10000,'tetrix plate 4x6',1.99,10);
+insert into inventoryItem values (0,10009,10002,'andymark plate 2x12',2.99,10);
 
 
 #TeamRequest Table
@@ -276,6 +276,6 @@ and requeststatus.description = 'pending';
 
 #inventoryAssignment table
 # every team gets 1 of each item
-insert into inventoryassignment (inventoryassignmentId,itemid,teamid,quantity)
-select 0,itemid,teamid,1
+insert into inventoryassignment (itemid,teamid,quantity)
+select itemid,teamid,1
 from inventoryitem join team;

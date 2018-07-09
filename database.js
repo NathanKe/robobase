@@ -127,3 +127,30 @@ exports.hierarchyParts = (hierarchyID,callback)=>{
 		}
 	});
 }
+
+exports.itemAvailCount = (itemID,callback)=>{
+	queryString = `
+		select totalquantity-assignedQty as availQty 
+		from (select sum(quantity) as assignedQty from inventoryassignment where itemid = ?) as assigned 
+		join inventoryitem where itemid= ?;`;
+	
+	pool.query(queryString,[itemID,itemID],(err,result)=>{
+		if(err){
+			callback(true,{})
+		}else{
+			callback(false,result);
+		}
+	});
+}
+
+exports.postCheckout = (userid,itemid,quantity,callback)=>{
+	queryString = `call assign_inventory(?,?,?)`
+	
+	pool.query(queryString,[userid,itemid,quantity],(err,result)=>{
+		if(err){
+			callback(true,{})
+		}else{
+			callback(false,result);
+		}
+	});
+}

@@ -169,10 +169,10 @@ create table teamRequest(
 ) auto_increment=10000 engine=INNODB;
 
 create table inventoryAssignment(
-	inventoryAssignmentID int not null auto_increment primary key,
 	itemID int not null,
-	constraint foreign key (itemID) references inventoryItem(itemID),
 	teamID int not null,
+    primary key(itemid,teamid),
+	constraint foreign key (itemID) references inventoryItem(itemID),
 	constraint foreign key (teamID) references team(teamID),
 	quantity int not null default 1
-) auto_increment=10000 engine=INNODB;
+) engine=INNODB;

@@ -13,23 +13,31 @@
 </head>
 
 <body onload="loadFunction()">
-	<p>Checkout/Checkin</p>
+	<h1>Checkout/Checkin</h1>
+	
 	<div>
 		<p>Current Inventory</p>
 		<table id="inventoryTable"></table>
 	</div>
 	
-	<div id="checkoutSelector">
-		<p>Hierarchy</p>
-		<select id="rootChildren" data-level=0 onChange="cascadeChildren(this)"></select>
-	</div>
 	<div>
-		<p>Part</p>
-		<select id="parts"></select>
-	</div>
-	<div>
-		<p>Quantity</p>
-		<select id="quantity"></select>
+		<div id="checkoutSelector">
+			<p>Hierarchy</p>
+			<select id="rootChildren" data-level=0 onChange="cascadeChildren(this)">
+				<option value=""></option>
+			</select>
+		</div>
+		<div>
+			<p>Part</p>
+			<select id="part" onChange="updateAvailQty()"></select>
+		</div>
+		<div>
+			<p>Quantity</p>
+			<select id="quantity"></select>
+		</div>
+		<div>
+			<button id="checkoutButton" type="button" onclick="postCheckout()">Checkout!</button>
+		</div>
 	</div>
 </body>
 

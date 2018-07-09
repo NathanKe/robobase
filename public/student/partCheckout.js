@@ -65,8 +65,10 @@ function fillParts(hierarchyID){
 	})
 	
 	call.done((data)=>{
-		var partSelect = $('#parts');
+		var partSelect = $('#part');
 		partSelect.empty();
+		var blankOpt = $('<option></option>').text("").attr('value',"");
+		partSelect.append(blankOpt);
 		for(i=0;i<data.length;i++){
 			var opt = $('<option></option>').text(data[i].description).attr('value',data[i].itemID);
 			partSelect.append(opt);
@@ -78,14 +80,10 @@ function fillParts(hierarchyID){
 function cascadeChildren(parentSel){
 	newSelect = $('<select></select>');
 	
-	
-	
-	
-	
 	parentSelection = parentSel.value
 	parentLevel = parseInt(parentSel.dataset.level)
 	
-	$('select').filter(function(){return parseInt($(this).attr("data-level"))>parentLevel}).remove()
+	$('#checkoutSelector>select').filter(function(){return parseInt($(this).attr("data-level"))>parentLevel}).remove()
 	
 	newSelect.attr('data-level',parentLevel+1)
 	newSelect.attr('onChange','cascadeChildren(this)')
@@ -97,15 +95,72 @@ function cascadeChildren(parentSel){
 	})
 	
 	call.done((data)=>{
-		var rootSelect = $('#rootChildren');
-		for(i=0;i<data.length;i++){
-			var opt = $('<option></option>').text(data[i].description).attr('value',data[i].itemHierarchyID);
-			newSelect.append(opt);
+		if(data.length != 0){
+			var blankOpt = $('<option></option>').text("").attr('value',"");
+			newSelect.append(blankOpt)
+			for(i=0;i<data.length;i++){
+				var opt = $('<option></option>').text(data[i].description).attr('value',data[i].itemHierarchyID);
+				newSelect.append(opt);
+			}
+			$('#checkoutSelector').append(newSelect);
 		}
+		
 	});
 	call.fail(()=>{console.log("fail")});
 	
-	$('#checkoutSelector').append(newSelect);
-	
 	fillParts(parentSelection);
+}
+
+function updateAvailQty(){
+	selectedPartID = $('#part').val();
+
+	var call = $.ajax({
+		type:"GET",
+		url:"../report/itemAvailCount?itemid="+selectedPartID,
+		dataType:"json"
+	})
+	
+	call.done((data)=>{
+		qtySelect = $('#quantity');
+		qtySelect.empty();
+		
+		qtySelect.attr('disabled',false);
+		$('#checkoutButton').prop('disabled',false);
+		
+		availQty = data[0].availQty;
+		if(availQty != 0){
+			for(i=1;i<=availQty;i++){
+				var opt = $('<option></option>').text(i).attr('value',i);
+				qtySelect.append(opt);
+			}
+		}else{
+			$('#checkoutButton').prop('disabled',true);
+			qtySelect.attr('disabled',true);
+		}
+	});
+}
+
+function postCheckout(){
+	quantity = $('#quantity').val();
+	itemid = $('#part').val();
+	
+	postData = {
+		itemid:itemid,
+		quantity:quantity,
+	}
+	
+	$.ajax({
+		url:"http://localhost:8000/student/postCheckout",
+		type:"POST",
+		data:JSON.stringify(postData),
+		contentType:"application/json; charset=utf-8",
+		dataType:"json",
+		complete: function(data){
+			if(data.status == 200){
+				location.reload();
+			}else if(data.status == 400){
+				alert(data.responseJSON.err);
+			}
+		}
+	});
 }

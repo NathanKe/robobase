@@ -52,4 +52,18 @@ router.get('/partRequest',auth.isAuthenticated,auth.hasTask('partRequest'),(requ
 	}
 });
 
+router.post('/postCheckout',auth.isAuthenticated,auth.hasTask('partCheckout'),(request,response)=>{
+	if(response.locals.taskError){
+		response.redirect('back');
+	}else{
+		userid = jwt.bearerID(request.cookies.token);
+		itemid = request.body.itemid;
+		quantity = request.body.quantity;
+		db.postCheckout(userid,itemid,quantity,(err,result)=>{
+			if(err)throw err;
+			response.redirect('back');
+		});
+	}
+})
+
 module.exports = router;
