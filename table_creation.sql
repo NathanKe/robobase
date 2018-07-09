@@ -16,12 +16,12 @@ create table team (
 ) auto_increment=10000 engine=INNODB;
 
 create table teamUserAssignment(
-	teamUserAssignmentID int not null auto_increment primary key,
     teamID int not null,
+    userID int not null,
+    primary key(teamid,userid),
 	constraint foreign key (teamID) references team(teamID),
-	userID int not null,
 	constraint foreign key (userID) references users(userID)
-) auto_increment=10000 engine=INNODB;
+) engine=INNODB;
 
 create table role (
 	roleID int not null auto_increment primary key,

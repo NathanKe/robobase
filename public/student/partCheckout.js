@@ -143,7 +143,7 @@ function outUpdateAvailQty(){
 }
 
 function postCheckout(){
-	quantity = $('#quantity').val();
+	quantity = $('#outQuantity').val();
 	itemid = $('#outPart').val();
 	
 	postData = {
