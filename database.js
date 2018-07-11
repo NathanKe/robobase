@@ -46,7 +46,8 @@ exports.hasTask = (user,task,callback)=>{
 }
 
 exports.eventAvailability = (userID,callback)=>{
-	queryString = `select event.eventID,userID,availability,eventName,startTime,endTime,notes from event 
+	queryString = `select event.eventID,userID,availability,eventName,startTime,endTime,notes 
+	from event 
 	join eventAvailability on event.eventID = eventAvailability.eventID 
 	where keyEvent = 1 and userID = ?;`;
 	pool.query(queryString,[userID],(err,result)=>{
@@ -59,7 +60,8 @@ exports.eventAvailability = (userID,callback)=>{
 }
 
 exports.postEventAvailability = (userID,eventName,availability,callback)=>{
-	queryString = "update eventavailability set availability=? where eventID = (select eventID from event where eventName = ?) and userID = ?";
+	queryString = `update eventavailability set availability=? 
+	where eventID = (select eventID from event where eventName = ?) and userID = ?`;
 	
 	pool.query(queryString,[availability,eventName,userID],(err,result)=>{
 		if(err){
