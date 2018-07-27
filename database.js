@@ -1,8 +1,8 @@
 var mysql = require('mysql');
 var pool = mysql.createPool({
 		host: "localhost",
-		user: "root",
-		password:"",
+		user: "webappaccount",
+		password:"password",
 		database: "robobase",
 		connectionLimit: 40
 });
