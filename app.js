@@ -14,9 +14,9 @@ app.use(express.static('public'));
 
 
 //Import other file routes
-app.use('/report',require('./report.js'));
-app.use('/student',require('./student.js'));
-app.use('/coach',require('./coach.js'));
+app.use('/report',require('./routesEtc/report.js'));
+app.use('/student',require('./routesEtc/student.js'));
+app.use('/coach',require('./routesEtc/coach.js'));
 
 // Allow 'Cross Origin' stuff.  
 app.use(function(request, response, next) {
@@ -26,13 +26,13 @@ app.use(function(request, response, next) {
 });
 
 // database js encapsulates all functions to/from database
-var db = require('./database.js');
+var db = require('./routesEtc/database.js');
 
 // jwt.js encapsulates json web token settings
-var jwt = require('./jwt.js');
+var jwt = require('./routesEtc/jwt.js');
 
 // authMiddle.js contains middleware authentication functions (i.e. isAuthenticated)
-var auth = require('./authMiddle.js');
+var auth = require('./routesEtc/authMiddle.js');
 
 
 app.get('/',(request,response)=>{
