@@ -1,6 +1,5 @@
 drop database robobase;
 create database robobase;
-use robobase;
 
 create table users (
 	userID int not null auto_increment primary key,
@@ -102,8 +101,7 @@ create table userPermissionForm(
 
 create table account(
 	accountID int not null auto_increment primary key,
-	accountName varchar(30) not null,
-	currentBalance decimal(6,2) not null default 0
+	accountName varchar(30) not null
 ) auto_increment=10000 engine=INNODB;
 
 create table ledgerTransaction(

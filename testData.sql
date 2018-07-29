@@ -212,8 +212,8 @@ from permissionform
 where roleClass = 'Student';
 
 #account table
-insert into account values (0,'operations',999.99);
-insert into account values (0,'student earnings',0);
+insert into account values (0,'operations');
+insert into account values (0,'student earnings');
 
 #ledgerTransaction table
 insert into ledgerTransaction values (0,10000,'2018-09-01 08:00',999.99,'opening yearly balance');
