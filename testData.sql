@@ -217,6 +217,9 @@ insert into account values (0,'student earnings',0);
 
 #ledgerTransaction table
 insert into ledgerTransaction values (0,10000,'2018-09-01 08:00',999.99,'opening yearly balance');
+insert into ledgerTransaction values (0,10000,'2018-09-01 08:00',-123.45,'purchase # 1');
+insert into ledgertransaction values (0,10001,'2018-09-01 08:00',0.00,'opening yearly balance');
+insert into ledgertransaction values (0,10001,'2018-09-01 08:00',12.34,'student sale #1');
 
 #RequestType Table
 insert into requestType values (0,'purchase');
