@@ -31,7 +31,7 @@ create table role (
 
 create table userRoleAssignment (
 	userRoleAssignmentID int not null auto_increment primary key,
-	userID int not null,
+	userID int not null unique,
 	constraint foreign key (userID) references users(userID),
 	roleID int not null,
 	constraint foreign key (roleID) references role(roleID)
