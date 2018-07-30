@@ -1,3 +1,7 @@
+// Configuration of JWT, expose the necessary subset of functions to other
+// route files.
+// Keeps JWT secret in one place only.
+
 jwtSecret = 'Shhhhhhhhhh';
 jwt = require('jsonwebtoken');
 

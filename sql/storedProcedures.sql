@@ -1,3 +1,6 @@
+-- For more complex procedures than the reports in reportProcs.
+-- These will generally be tied to an action in the database.js handler file
+
 drop procedure if exists assign_inventory;
 delimiter //
 create procedure assign_inventory (

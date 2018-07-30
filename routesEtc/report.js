@@ -1,3 +1,9 @@
+// Endpoints for getting data/reports
+// No pages rendered from these endpoints
+// All generally call the underlying database query
+// Helps to define another layer of abstraction between
+// client and database.
+
 var express = require('express');
 var router = express.Router();
 var db = require('./database.js');

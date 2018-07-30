@@ -1,3 +1,4 @@
+// Client side logic for clicking login button
 function loginClick(){
 	var username = $('#username').val();
 	var password = $('#password').val();

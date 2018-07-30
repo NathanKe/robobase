@@ -1,9 +1,11 @@
+// pn page load fill in current inventory and checkin/checkout root drop downs
 function loadFunction(){
 	pullInventory();
 	outFillRootSelect();
 	inFillRootSelect();
 }
 
+// Get current inventory data from DB
 function pullInventory(){
 	
 	
@@ -40,6 +42,7 @@ function pullInventory(){
 	call.fail(()=>{console.log("fail")});
 }
 
+// fill checkout hierarchy root select
 function outFillRootSelect(){
 	var call = $.ajax({
 		type:"GET",
@@ -57,6 +60,7 @@ function outFillRootSelect(){
 	call.fail(()=>{console.log("fail")});
 }
 
+// fill checkout part selector
 function outFillParts(hierarchyID){
 	
 	var call = $.ajax({
@@ -78,6 +82,7 @@ function outFillParts(hierarchyID){
 	call.fail(()=>{console.log("fail")});
 }
 
+// manage cascading dropdowns as user navigates through item hierarchy tree
 function outCascadeChildren(parentSel){
 	newSelect = $('<select></select>');
 	
@@ -112,6 +117,7 @@ function outCascadeChildren(parentSel){
 	outFillParts(parentSelection);
 }
 
+// on selected part, get available qty from DB and update select accordingly
 function outUpdateAvailQty(){
 	selectedPartID = $('#outPart').val();
 
@@ -147,6 +153,7 @@ function outUpdateAvailQty(){
 	});
 }
 
+// post the checkout to the DB
 function postCheckout(){
 	quantity = $('#outQuantity').val();
 	itemid = $('#outPart').val();
@@ -172,6 +179,7 @@ function postCheckout(){
 	});
 }
 
+// Fill root hierarchy children for checkin
 function inFillRootSelect(){
 	var call = $.ajax({
 		type:"GET",
@@ -189,6 +197,7 @@ function inFillRootSelect(){
 	call.fail(()=>{console.log("fail")});
 }
 
+// fill parts select for selected hierarchy level for checkin
 function inFillParts(hierarchyID){
 	
 	var call = $.ajax({
@@ -210,6 +219,7 @@ function inFillParts(hierarchyID){
 	call.fail(()=>{console.log("fail")});
 }
 
+// manage hierarchy level cascade dropdown for checkin
 function inCascadeChildren(parentSel){
 	newSelect = $('<select></select>');
 	
@@ -244,6 +254,7 @@ function inCascadeChildren(parentSel){
 	inFillParts(parentSelection);
 }
 
+// get from DB and update UI possible checkin quantities
 function inUpdateAvailQty(){
 	selectedPartID = $('#inPart').val();
 	

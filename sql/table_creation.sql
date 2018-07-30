@@ -1,3 +1,6 @@
+-- All table definitions.
+-- All follow directly definition from the Data Dictionary
+
 drop database robobase;
 create database robobase;
 

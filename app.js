@@ -18,7 +18,9 @@ app.use('/report',require('./routesEtc/report.js'));
 app.use('/student',require('./routesEtc/student.js'));
 app.use('/coach',require('./routesEtc/coach.js'));
 
-// Allow 'Cross Origin' stuff.  
+// Allow 'Cross Origin' stuff.
+// reference from https://stackoverflow.com/questions/7067966/how-to-allow-cors
+// don't completely understand this part
 app.use(function(request, response, next) {
 	response.header("Access-Control-Allow-Origin", "*");
 	response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

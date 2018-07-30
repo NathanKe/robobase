@@ -1,3 +1,4 @@
+// get event availability for this student
 function pullEventData(){
 	var call = $.ajax({
 		type:"GET",
@@ -9,6 +10,7 @@ function pullEventData(){
 	call.fail(()=>{console.log("fail")});
 }
 
+// fill the display table
 function fillTable(data){
 	var table = $('#eventTable');
 	
@@ -47,6 +49,7 @@ function fillTable(data){
 	});
 }
 
+// post the selected event availabilities
 function postAvailabilities(){
 	var eventAvailData = [];
 	$('#eventTable>tr').each((index,item)=>{

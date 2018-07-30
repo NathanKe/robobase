@@ -1,3 +1,6 @@
+// All requests to and from the database are routed through this file.
+
+// Single shared connection to the database, called by all functions
 var mysql = require('mysql');
 var pool = mysql.createPool({
 		host: "localhost",

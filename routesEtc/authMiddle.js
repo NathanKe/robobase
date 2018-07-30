@@ -1,6 +1,12 @@
 var db = require('./database.js');
 var jwt = require('./jwt.js');
 
+// middleware functions to check for authentication.
+// a endpoint can pass through these in a chain, checking auth, then role class, then
+// that the user in question holds a particular task.
+// 
+// Backbone of user access control functionality.
+
 //https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens#route-middleware-to-protect-api-routes
 //https://scotch.io/tutorials/route-middleware-to-check-if-a-user-is-authenticated-in-node-js
 exports.isAuthenticated = (request,response,next)=>{

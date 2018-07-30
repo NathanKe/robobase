@@ -1,5 +1,4 @@
-var resdata;
-
+// pull event availability data from DB
 function pullEventData(){
 	var call = $.ajax({
 		type:"GET",
@@ -7,10 +6,11 @@ function pullEventData(){
 		dataType:"json"
 	})
 	
-	call.done((data)=>{fillTable(data);fillStats(data);resdata=data;});
+	call.done((data)=>{fillTable(data);fillStats(data)});
 	call.fail(()=>{console.log("fail")});
 }
 
+// Fill granular results table
 function fillTable(data){
 	table = $('#availTable');
 	
@@ -60,6 +60,7 @@ function fillTable(data){
 	});
 }
 
+// fill overview stats table
 function fillStats(data){
 	table = $('#statsTable')
 	
