@@ -3,6 +3,7 @@
 
 drop database robobase;
 create database robobase;
+use robobase;
 
 create table users (
 	userID int not null auto_increment primary key,
